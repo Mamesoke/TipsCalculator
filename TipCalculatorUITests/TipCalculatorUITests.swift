@@ -10,19 +10,22 @@ import XCTest
 final class TipCalculatorUITests: XCTestCase {
     
     private var app: XCUIApplication!
+    private var contentViewPage: ContentViewPage!
 
     override func setUpWithError() throws {
         app = runApp()
+        contentViewPage = .init(app: app)
     }
 
     override func tearDownWithError() throws {
+        contentViewPage = nil
         app = nil
     }
 
     func testGivenContentViewWhenAppInitThenIsShown() throws {
         let expected = "Enter total"
 
-        let totalTextField = app.textFields["totalTextField"]
+        let totalTextField = contentViewPage.totalTextField
         
         XCTAssertEqual(totalTextField.value as? String, expected)
     }
@@ -30,7 +33,7 @@ final class TipCalculatorUITests: XCTestCase {
     func testGiven20PercentWhenDefaultTipOptionThenIsSelected() throws {
         let expected = "20%"
         
-        let tipPercentageSegmentedControl = app.segmentedControls["tipPercentageSegmentedControl"]
+        let tipPercentageSegmentedControl = contentViewPage.tipPercentageSegmentedControl
         let segmentedControlButton = tipPercentageSegmentedControl.buttons.element(boundBy: 1)
         
         XCTAssertEqual(segmentedControlButton.label, expected)
@@ -40,14 +43,14 @@ final class TipCalculatorUITests: XCTestCase {
     func testGivenNumberWhenCalculateThenIsPressed() {
         let expected = formatCurrency(20.00)
 
-        let totalTextField = app.textFields["totalTextField"]
+        let totalTextField = contentViewPage.totalTextField
         totalTextField.tap()
         totalTextField.typeText("100")
 
-        let calculateTipButton = app.buttons["calculateTipButton"]
+        let calculateTipButton = contentViewPage.calculateTipButton
         calculateTipButton.tap()
         
-        let tipText = app.staticTexts["tipText"]
+        let tipText = contentViewPage.tipText
         
         let _ = tipText.waitForExistence(timeout: 0.5)
         
@@ -57,14 +60,14 @@ final class TipCalculatorUITests: XCTestCase {
     func testGivenInvalidNumberWhenCalculateThenMessageIsShown() {
         let expected = "Invalid input"
 
-        let totalTextField = app.textFields["totalTextField"]
+        let totalTextField = contentViewPage.totalTextField
         totalTextField.tap()
         totalTextField.typeText("-100")
         
-        let calculateTipButton = app.buttons["calculateTipButton"]
+        let calculateTipButton = contentViewPage.calculateTipButton
         calculateTipButton.tap()
         
-        let messageText = app.staticTexts["messageText"]
+        let messageText = contentViewPage.messageText
         
         let _ = messageText.waitForExistence(timeout: 0.5)
         
